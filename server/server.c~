@@ -35,7 +35,7 @@ int server_init(unsigned short port)
   r = pthread_join(id, (void**)&exitcode);
   if (r != 0)
   {
-    handle_errorno(r,"pthread_join");
+    handle_errno(r,"pthread_join");
     printf("thread joined failed exit code: %lu\n", exitcode);
   }
 }

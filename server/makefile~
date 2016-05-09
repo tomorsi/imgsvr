@@ -9,9 +9,9 @@ imgsrv: server.o main.o
 	$(CC) $(CFLAGS) main.o server.o -o imgsrv
 
 main.o: main.c
-	$(CC) $(CFLAGS) -c main.c -o main.o
+	$(CC) $(CFLAGS) main.c -o main.o
 
 server.o: server.c
-	$(CC) $(CFLAGS) -c server.c -o server.o
+	$(CC) $(CFLAGS) server.c -o server.o
 
 
