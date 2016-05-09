@@ -1,0 +1,6 @@
+echo "# imgsvr, udp based image server for foscams " >> README.md
+git init
+git add README.md
+git commit -m "initial checkin server side half done "
+git remote add origin https://github.com/tomorsi/imgsvr.git
+git push -u origin master
