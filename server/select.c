@@ -15,12 +15,14 @@
 #include "server.h"
 
 
-void read_select()
+void read_select(unsigned short port)
 {
+  int r;
   fd_set readfds, allset;
   int socketfd;
   char recvbuffer[MAXLENGTH],sendbuffer[MAXLENGTH];
   struct timeval timeout;
+  struct sockaddr_in clientaddr,srvaddr;
 
   timeout.tv_sec = 4;
   timeout.tv_usec = 150000; 
@@ -30,6 +32,17 @@ void read_select()
     handle_errormsg("socket()");
   }
 
+  memset((char *)&srvaddr, 0, sizeof(srvaddr));
+  srvaddr.sin_family = AF_INET;
+  srvaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+  /* Using port 0 allows OS to choose port. */
+  srvaddr.sin_port = htons(port); 
+  r = bind(socketfd, (struct sockaddr *)&srvaddr, sizeof(srvaddr));
+  if (r < 0)
+  {
+    handle_errorno(r,"bind()");
+  }
+
   int flags = fcntl(socketfd, F_GETFL);
   flags |= O_NONBLOCK;
   fcntl(socketfd, F_SETFL, flags);
@@ -37,10 +50,10 @@ void read_select()
   FD_ZERO(&allset);
   FD_SET(socketfd,&allset);
 
+  // Use a condition variable here to indicate end.
   while(1)
   {
     int nready;
-    struct sockaddr_in clientaddr,srvaddr;
 
     unsigned int addrlen = sizeof(clientaddr);
 

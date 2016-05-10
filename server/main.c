@@ -7,7 +7,7 @@
 #include "server.h"
 
 unsigned short verbose = 0;
-unsigned short port = 0;
+unsigned short port = DEFAULT_PORT;
  
 /*
  * The lifetime of argv, env is the program cant
@@ -18,7 +18,7 @@ int main(int argc, char *argv[], char **env)
 {
   int r = 0;
 
-  if (process_arguments(argc,argv)>0)
+  if (process_arguments(argc,argv)>-1)
     r = server_init(port);
   else 
   {
