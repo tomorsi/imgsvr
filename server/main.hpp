@@ -1,5 +1,5 @@
-#ifndef __MAIN_H__
-#define __MAIN_H__
+#ifndef __MAIN_HPP__
+#define __MAIN_HPP__
 
 #define DEFAULT_PORT 2048
 

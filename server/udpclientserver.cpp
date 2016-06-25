@@ -1,5 +1,5 @@
 
-#include "UDPClientServer.h"
+#include "udpclientserver.hpp"
 
 #include <sys/socket.h>
 
@@ -17,19 +17,20 @@ UDPClientServer::UDPClientServer(unsigned int port)
 
 int UDPClientServer::createSocketFd()
 {
-    int socketfd = socket(AF_INET, SOCK_DGRAM, 0);
-    if (socketfd == -1)
+    m_socketfd = socket(AF_INET, SOCK_DGRAM, 0);
+    if (m_socketfd == -1)
     {
-	return socketfd;
+	return m_socketfd;
     }
 
     
-    int result = bind(m_socketFd, (struct sockaddr *)&m_serveraddr, sizeof(m_serveraddr));
+    int result = bind(m_socketfd, (struct sockaddr *)&m_serveraddr, sizeof(m_serveraddr));
     if (result < 0)
     {
 	return result;
     }
 
+    return m_socketfd;
 }
 
 
@@ -39,7 +40,7 @@ int UDPClientServer::Receive(unsigned int& history)
 
     unsigned int recvbytes;
     int actual = recvfrom(m_socketfd, &recvbytes, sizeof(recvbytes), 0,
-	     &client.m_addr, client.m_len);
+			  (struct sockaddr *)&client.m_addr, &client.m_len);
 
     if (actual < 0 )
 	return actual;
@@ -54,26 +55,43 @@ int UDPClientServer::Receive(unsigned int& history)
 
 int UDPClientServer::Send(imagearraytype& imagearray, int id)
 {
+    int bytesSent = 0;
     UDPClient client = m_activeClients[id];
 
     int imagecount = imagearray.size();
-    sendto(m_socketfd, imagecount, sizeof(imagecount), 0,
-	   client.m_addr, client.m_len);
+    int result = sendto(m_socketfd, &imagecount, sizeof(imagecount), 0,
+			(struct sockaddr *)&client.m_addr, client.m_len);
+    if (result < 0)
+	return result;
+
+
+    bytesSent += result;
 
     for(auto i = imagearray.begin(); i != imagearray.end(); i++)
     {
 	// Send the size of the image. 
 	unsigned int imagesize = i->size();
-	sendto(m_socketfd, imagesize, sizeof(imagesize), 0,
-	       client.m_addr, client.m_len);
+	result = sendto(m_socketfd, &imagesize, sizeof(imagesize), 0,
+			(struct sockaddr *)&client.m_addr, client.m_len);
+
+	if (result < 0)
+	    return result;
+
+	bytesSent += result;
 
 
 	RawImageBytes bytes(imagesize);
 	std::for_each(i->begin(), i->end(), bytes);
 
-	sendto(m_socketfd, bytes.m_bytes, bytes.m_size, 0,
-	       client.m_addr, client.m_len);
-    }
+	result = sendto(m_socketfd, &bytes.m_bytes, bytes.m_size, 0,
+			(struct sockaddr *)&client.m_addr, client.m_len);
+	if (result < 0)
+	    return result;
+	
 
+	bytesSent += result;
+    }
+    
+    return bytesSent;
 } 
 

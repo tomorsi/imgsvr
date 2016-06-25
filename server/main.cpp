@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <getopt.h>
 
-#include "Server.h"
+#include "server.hpp"
 
 unsigned short verbose = 0;
 unsigned short port = 2048;

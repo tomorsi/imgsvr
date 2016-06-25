@@ -6,7 +6,7 @@
 #include <sys/select.h>
 #include <sys/fcntl.h> 
 
-#include "Server.h"
+#include "server.hpp"
 
 Server::Server(unsigned short port)
     :m_port(port),m_Finished(false)
