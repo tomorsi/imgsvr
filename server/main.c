@@ -3,30 +3,13 @@
 #include <stdio.h>
 #include <getopt.h>
 
-#include "main.h"
-#include "server.h"
+#include "Server.h"
 
 unsigned short verbose = 0;
-unsigned short port = DEFAULT_PORT;
- 
-/*
- * The lifetime of argv, env is the program cant
- * be use in atext routine. 
- */
+unsigned short port = 2048;
 
-int main(int argc, char *argv[], char **env)
+void usage(void)
 {
-  int r = 0;
-
-  if (process_arguments(argc,argv)>-1)
-    r = server_init(port);
-  else 
-  {
-    r = -1;  
-    usage();
-  }
-
-  return r;
 }
 
 int process_arguments(int argc, char *argv[])
@@ -53,7 +36,26 @@ int process_arguments(int argc, char *argv[])
   return r;
 }
 
-void usage(void)
-{
+/*
+ * The lifetime of argv, env is the program cant
+ * be use in atext routine. 
+ */
 
+int main(int argc, char *argv[], char **env)
+{
+  int r = 0;
+
+  if (process_arguments(argc,argv)>-1)
+  {
+      Server server(port);
+      server.Start();
+  }
+  else 
+  {
+    r = -1;  
+    usage();
+  }
+
+  return r;
 }
+
