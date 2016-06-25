@@ -2,18 +2,16 @@
 #
 #
 
-CC = gcc
-CFLAGS  = -g -Wall
+CC = g++
+CFLAGS  = -g -Wall -std=c++0x
 
-imgsrv: server.o main.o select.o
-	$(CC) $(CFLAGS) main.o server.o select.o -o imgsrv
+imgsrv: server.o main.o 
+	$(CC) $(CFLAGS) main.o server.o -o imgsrv
 
-main.o: main.c
-	$(CC) $(CFLAGS) -c main.c -o main.o
+main.o: main.C
+	$(CC) $(CFLAGS) -c main.C -o main.o
 
-server.o: server.c
-	$(CC) $(CFLAGS) -c server.c -o server.o
+server.o: server.C
+	$(CC) $(CFLAGS) -c server.C -o server.o
 
-select.o: select.c
-	$(CC) $(CFLAGS) -c select.c -o select.o
 
