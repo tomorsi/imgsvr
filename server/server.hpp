@@ -28,10 +28,12 @@ private:
     bool m_Finished;
 
     std::vector<std::thread> m_activeThreads;
+    std::thread m_controlThread;
+
 
     void ioThreadFunction(int socketfd);
 
-    void joinerThreadFunction(void);
+    void controlThreadFunction(void);
 
     std::mutex m_mutex;
     std::condition_variable m_condvar;
